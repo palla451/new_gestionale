@@ -35,13 +35,15 @@ class AuthenticationController extends Controller
 
             $oClient = OClient::where('password_client', 1)->first();
             $result = $this->tokenManagement->getTokenAndRefreshToken($oClient, $params);
-            return $result;
-            $result['access_token'] = $user->createToken('access_token')->accessToken;
+
+            $token['access_token'] = $result['access_token'];
+            $token['refresh_token'] = $user->createToken('access_token')->accessToken;
 
             return response()->json([
-                'token' => $result['access_token'],
+                'type' => $result['token_type'],
+                'token' =>  $token['access_token'],
                 'expires_in' => $result['expires_in'],
-                'refresh_token' =>$result['refresh_token'],
+                'refresh_token' =>  $token['refresh_token'],
                 'user' => $user,
             ], 200);
         } else {
